@@ -1,0 +1,49 @@
+version: '3.1'
+
+services:
+  mysql:
+    image: mysql:8
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+    volumes:
+      - ./mysql:/var/lib/mysql
+  web:
+    image: php:7.2.2-apache
+    container_name: php_web
+    depends_on:
+      - mysql
+    volumes:
+      - ./www/:/var/www/html/
+    ports:
+      - "80:80"
+    stdin_open: true
+    tty: true
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    links:
+      - mysql:db
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_ARBITRARY:1
+    depends_on:
+      - mysql
+  code:
+    image: codercom/code-server
+    command: '--allow-http --no-auth'
+    volumes:
+      - ./www:/home/coder/project
+    ports:
+      - "8443:8443"
+  samba:
+    image: twistify/anonymous-samba
+    volumes:
+      - ./www:/data/shared
+    ports:
+      - "139:139"
+      - "445:445"
+      - "137:137/udp"
+      - "138:138/udp"
+
