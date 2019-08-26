@@ -1,4 +1,5 @@
-./lamp-coder/www
-./lamp-coder/mysql
-./python-flask-mongo/mongodb
+lamp-coder/www
+lamp-coder/mysql
+python-flask-mongo/mongodb
+python-flask-mongo/flaskapp/app/__pycache__/
 
