@@ -1,0 +1,51 @@
+version: '3'
+services:
+  flaskapp:
+    build: ./flaskapp
+    volumes:
+      - ./flaskapp/app:/srv/app
+    ports:
+      - "80:80"
+    links:
+      - redis:redis
+      - mongo:mongo
+    depends_on:
+      - redis
+      - mongo
+    restart: always
+  mongo:
+    image: mongo
+    volumes:
+      - ./mongodb:/data/db
+  mongo-express:
+    image: mongo-express
+    links:
+      - mongo:mongo
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    restart: always
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always
+  code:
+    image: codercom/code-server
+    command: '--allow-http --no-auth'
+    volumes:
+      - ./flaskapp:/home/coder/project
+    ports:
+      - "8443:8443"
+    restart: always
+  samba:
+    image: twistify/anonymous-samba
+    volumes:
+      - ./flaskapp:/data/shared
+    ports:
+      - "139:139"
+      - "445:445"
+      - "137:137/udp"
+      - "138:138/udp"
+    restart: always
